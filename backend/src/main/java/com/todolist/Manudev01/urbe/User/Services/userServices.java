@@ -8,6 +8,8 @@ import java.sql.SQLException;
 
 public class userServices {
 
+    PreparedStatement ps;
+
     public String getAllUsers(){
         String sql = "SELECT * FROM usuarios";
         try (Connection connection = DatabaseConnection.getConnection();
@@ -27,12 +29,12 @@ public class userServices {
     public String userRegister(String nombre, String apellido, String usuario, String contrasena) {
         String sql = "INSERT INTO usuarios(nombre, apellido, usuario, contrasena) VALUES (?, ?, ?, ?)";
         try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setString(1, nombre);
-            preparedStatement.setString(2, apellido);
-            preparedStatement.setString(3, usuario);
-            preparedStatement.setString(4, contrasena);
-            int rowsAffected = preparedStatement.executeUpdate();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, nombre);
+            ps.setString(2, apellido);
+            ps.setString(3, usuario);
+            ps.setString(4, contrasena);
+            int rowsAffected = ps.executeUpdate();
             if (rowsAffected > 0) {
                 return "User registered successfully!";
             } else {

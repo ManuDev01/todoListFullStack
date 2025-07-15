@@ -59,41 +59,32 @@ document.querySelectorAll('.task p').forEach(hacerEditableTask);
 // Añadir nueva tarea
 function agregarNuevaTarea() {
     mostrarModalNombreTarea(function(nombreTarea) {
-        const idPestana = obtenerIdPestanaSeleccionada(); // Implementa esta función según tu lógica
+        // Crear el hr superior
+        const hrArriba = document.createElement('hr');
+        // Crear el div de la tarea
+        const taskDiv = document.createElement('div');
+        taskDiv.className = 'task';
+        taskDiv.innerHTML = `
+            <input type="checkbox" name="taskCheck" id="">
+            <p>${nombreTarea}</p>
+            <div id="taskButtons">
+                <img id="checkTask" src="../public/assets/images/check.png" alt="">
+                <hr>
+                <img id="deleteTask" src="../public/assets/images/trash.png" alt="">
+            </div>
+        `;
+        // Crear el hr inferior
+        const hrAbajo = document.createElement('hr');
 
-        // Crear el objeto de la tarea
-        const taskData = {
-            nombre: nombreTarea,
-            idPestana: idPestana
-        };
+        // Insertar antes del div de añadir tarea
+        const addTaskDiv = document.getElementById('addTask');
+        //addTaskDiv.parentNode.insertBefore(hrArriba, addTaskDiv);
+        addTaskDiv.parentNode.insertBefore(taskDiv, addTaskDiv);
+        addTaskDiv.parentNode.insertBefore(hrAbajo, addTaskDiv);
 
-        // Enviar a la API
-        addTask(taskData).then(result => {
-            if (result) {
-                // Crear la tarea en el frontend
-                const taskDiv = document.createElement('div');
-                taskDiv.className = 'task';
-                taskDiv.innerHTML = `
-                    <input type="checkbox" name="taskCheck">
-                    <p>${nombreTarea}</p>
-                    <div id="taskButtons">
-                        <img id="checkTask" src="../public/assets/images/check.png" alt="">
-                        <hr>
-                        <img id="deleteTask" src="../public/assets/images/trash.png" alt="">
-                    </div>
-                `;
-                const hr = document.createElement('hr');
-                const addTaskDiv = document.getElementById('addTask');
-                addTaskDiv.parentNode.insertBefore(taskDiv, addTaskDiv);
-                addTaskDiv.parentNode.insertBefore(hr, addTaskDiv);
-
-                // Hacer el nombre editable al hacer doble clic
-                const taskName = taskDiv.querySelector('p');
-                hacerEditableTask(taskName);
-            } else {
-                alert('Error al agregar tarea');
-            }
-        });
+        // Hacer el nombre editable al hacer doble clic
+        const taskName = taskDiv.querySelector('p');
+        hacerEditableTask(taskName);
     });
 }
 
@@ -101,20 +92,20 @@ document.querySelector('#addTask img').addEventListener('click', agregarNuevaTar
 
 // Función para agregar una nueva pestaña
 function agregarNuevaPestana() {
-    const tabDiv = document.createElement('div');
-    tabDiv.className = 'tab';
-    tabDiv.innerHTML = `
-        <p>nueva</p>
-        <img class="close-icon" src="../public/assets/images/close.png" alt="">
-    `;
+    mostrarModalNombrePestana(function(nombrePestana) {
+        const tabDiv = document.createElement('div');
+        tabDiv.className = 'tab';
+        tabDiv.innerHTML = `
+            <p>${nombrePestana}</p>
+            <img class="close-icon" src="../public/assets/images/close.png" alt="">
+        `;
+        const addTabDiv = document.querySelector('.addTab');
+        addTabDiv.parentNode.insertBefore(tabDiv, addTabDiv);
 
-    // Insertar antes de .addTab
-    const addTabDiv = document.querySelector('.addTab');
-    addTabDiv.parentNode.insertBefore(tabDiv, addTabDiv);
-
-    // Hacer el nombre editable al hacer doble clic
-    const tabName = tabDiv.querySelector('p');
-    hacerEditableTab(tabName);
+        // Hacer el nombre editable al hacer doble clic
+        const tabName = tabDiv.querySelector('p');
+        hacerEditableTab(tabName);
+    });
 }
 
 // Asignar evento al botón de agregar pestaña
@@ -593,6 +584,86 @@ function mostrarModalNombreTarea(callback) {
     modalContent.appendChild(btnAceptar);
 
     // Botón cerrar
+    const btnCerrar = document.createElement('button');
+    btnCerrar.textContent = 'Cerrar';
+    btnCerrar.style.color = '#fff';
+    btnCerrar.style.background = '#dc3545';
+    btnCerrar.style.border = 'none';
+    btnCerrar.style.borderRadius = '8px';
+    btnCerrar.style.marginTop = '10px';
+    btnCerrar.style.padding = '6px 16px';
+    btnCerrar.onclick = function() {
+        document.body.removeChild(modalBg);
+    };
+    modalContent.appendChild(btnCerrar);
+
+    modalBg.appendChild(modalContent);
+    document.body.appendChild(modalBg);
+}
+
+function mostrarModalNombrePestana(callback) {
+    if (document.getElementById('modalNombrePestana')) return;
+
+    const modalBg = document.createElement('div');
+    modalBg.id = 'modalNombrePestana';
+    modalBg.style.position = 'fixed';
+    modalBg.style.top = '0';
+    modalBg.style.left = '0';
+    modalBg.style.width = '100vw';
+    modalBg.style.height = '100vh';
+    modalBg.style.background = 'rgba(0,0,0,0.5)';
+    modalBg.style.display = 'flex';
+    modalBg.style.alignItems = 'center';
+    modalBg.style.justifyContent = 'center';
+    modalBg.style.zIndex = '1000';
+
+    const modalContent = document.createElement('div');
+    modalContent.style.background = '#242424';
+    modalContent.style.padding = '30px 40px';
+    modalContent.style.borderRadius = '12px';
+    modalContent.style.boxShadow = '0 2px 10px rgba(0,0,0,0.3)';
+    modalContent.style.display = 'flex';
+    modalContent.style.flexDirection = 'column';
+    modalContent.style.alignItems = 'center';
+
+    const titulo = document.createElement('h2');
+    titulo.textContent = 'Nombre de la pestaña';
+    titulo.style.color = '#fff';
+    titulo.style.marginBottom = '20px';
+    modalContent.appendChild(titulo);
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.placeholder = 'Escribe el nombre de la pestaña';
+    input.style.marginBottom = '20px';
+    input.style.padding = '8px';
+    input.style.borderRadius = '6px';
+    input.style.border = '1px solid #ccc';
+    input.style.width = '200px';
+    input.style.color = '#fff';
+    input.style.background = '#333';
+    modalContent.appendChild(input);
+
+    const btnAceptar = document.createElement('button');
+    btnAceptar.textContent = 'Aceptar';
+    btnAceptar.style.color = '#fff';
+    btnAceptar.style.background = '#007bff';
+    btnAceptar.style.border = 'none';
+    btnAceptar.style.borderRadius = '8px';
+    btnAceptar.style.margin = '10px';
+    btnAceptar.style.padding = '10px 20px';
+    btnAceptar.style.fontSize = '16px';
+    btnAceptar.onclick = function() {
+        const nombrePestana = input.value.trim();
+        if (nombrePestana) {
+            document.body.removeChild(modalBg);
+            callback(nombrePestana);
+        } else {
+            alert('Por favor ingresa un nombre para la pestaña');
+        }
+    };
+    modalContent.appendChild(btnAceptar);
+
     const btnCerrar = document.createElement('button');
     btnCerrar.textContent = 'Cerrar';
     btnCerrar.style.color = '#fff';

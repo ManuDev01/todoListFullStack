@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.40.0 -->
+<interface>
+  <requires lib="gtk+" version="3.24"/>
+  <object class="GtkWindow" id="mainWindow">
+    <property name="can-focus">False</property>
+    <signal name="destroy" handler="eventoSalir" swapped="no"/>
+    <child>
+      <object class="GtkNotebook" id="pestanas">
+        <property name="name">pestanas</property>
+        <property name="visible">True</property>
+        <property name="can-focus">True</property>
+        <child>
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="orientation">vertical</property>
+          </object>
+        </child>
+        <child type="tab">
+          <object class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="label" translatable="yes">Tareas</property>
+          </object>
+          <packing>
+            <property name="tab-fill">False</property>
+            <property name="reorderable">True</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="orientation">vertical</property>
+          </object>
+          <packing>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child type="tab">
+          <object class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="label" translatable="yes">Trabajo</property>
+          </object>
+          <packing>
+            <property name="position">1</property>
+            <property name="tab-fill">False</property>
+            <property name="reorderable">True</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="orientation">vertical</property>
+          </object>
+          <packing>
+            <property name="position">2</property>
+          </packing>
+        </child>
+        <child type="tab">
+          <object class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="label" translatable="yes">+</property>
+          </object>
+          <packing>
+            <property name="position">2</property>
+            <property name="tab-fill">False</property>
+            <property name="reorderable">True</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkBox" id="tarea_ejemplo">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="orientation">horizontal</property>
+    <property name="spacing">6</property>
+    <child>
+      <object class="GtkButton" id="btn_borrar_tarea">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <property name="relief">none</property>
+        <child>
+          <object class="GtkImage">
+            <property name="icon-name">user-trash-symbolic</property>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="GtkCheckButton" id="check_completada">
+        <property name="visible">True</property>
+        <property name="can-focus">True</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkEntry" id="entrada_nombre_tarea">
+        <property name="visible">True</property>
+        <property name="can-focus">True</property>
+        <property name="text">Nombre de la tarea</property>
+      </object>
+    </child>
+  </object>
+</interface>

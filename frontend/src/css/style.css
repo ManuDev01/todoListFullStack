@@ -1,0 +1,237 @@
+/*
+instalar sass:
+npm install -g sass
+
+Comando para compilar el archivo scss a css:
+sass --watch frontend/src/css/style.scss:frontend/src/css/style.css
+*/
+@font-face {
+  font-family: "Open Sans";
+  src: url("../../public/assets/fonts/OpenSans.ttf");
+}
+* {
+  font-family: "Open Sans", sans-serif;
+  margin: 0;
+  background-color: #333;
+}
+
+#TabHeader {
+  display: flex;
+  flex-direction: row;
+  top: 0;
+  width: 100%;
+  height: 50px;
+  background-color: #292929;
+  color: #fff;
+  text-align: center;
+  line-height: 50px;
+  font-size: 20px;
+}
+#TabHeader .user {
+  margin-left: auto;
+  background-color: transparent;
+}
+#TabHeader .user #userImage {
+  background-color: transparent;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-top: 5px;
+  margin-left: 10px;
+  margin-right: 10px;
+  object-fit: cover;
+}
+#TabHeader .user #userImage:hover {
+  content: url("../../public/assets/images/usuarioHoverActive.png");
+  cursor: pointer;
+}
+#TabHeader .user #userImage:active {
+  content: url("../../public/assets/images/usuarioHoverActive.png");
+  width: 38px;
+  height: 38px;
+}
+
+.tab {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: #242424;
+  margin-top: 10px;
+  padding-right: 10px;
+  border-radius: 10px 10px 0 0;
+  border-color: rgb(80, 80, 80);
+  border-style: solid;
+  border-bottom: none;
+  font-size: 14px;
+}
+.tab p {
+  background-color: transparent;
+  margin: 0;
+  display: inline-block;
+  padding: 0 10px;
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tab .close-icon {
+  content: url("../../public/assets/images/close.png");
+  background-color: #242424;
+  margin-left: 0px;
+  width: 15px;
+  height: 15px;
+}
+.tab .close-icon:active {
+  content: url("../../public/assets/images/closeActive.png");
+  width: 13px;
+  height: 13px;
+}
+.tab .close-icon:hover {
+  cursor: pointer;
+  content: url("../../public/assets/images/closeActive.png");
+}
+.tab:hover {
+  cursor: pointer;
+}
+
+.addTab {
+  background-color: #242424;
+  width: 70px;
+  margin-top: 10px;
+  border-radius: 10px 10px 0 0;
+  border-color: rgb(80, 80, 80);
+  border-style: solid;
+  border-bottom: none;
+}
+.addTab img {
+  background-color: #242424;
+  width: 25px;
+  height: 25px;
+  align-items: center;
+  justify-content: center;
+}
+.addTab :hover {
+  cursor: pointer;
+}
+.addTab :active {
+  width: 23px;
+  height: 23px;
+}
+
+.todoContainer {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 100px;
+}
+.todoContainer .task {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-left: 30px;
+  margin-right: 30px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  color: white;
+  font-size: 16px;
+}
+.todoContainer .task p {
+  margin-top: 10px;
+}
+.todoContainer .task #taskButtons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-right: 10px;
+}
+.todoContainer .task #taskButtons #checkTask {
+  width: 30px;
+  height: 30px;
+  flex-direction: row;
+  align-items: center;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+.todoContainer .task #taskButtons #checkTask:hover {
+  cursor: pointer;
+}
+.todoContainer .task #taskButtons #checkTask:active {
+  width: 28px;
+  height: 28px;
+}
+.todoContainer .task #taskButtons hr {
+  width: 1px;
+  height: 35px;
+  background-color: #fff;
+}
+.todoContainer .task #taskButtons #deleteTask {
+  width: 30px;
+  height: 30px;
+  flex-direction: row;
+  align-items: center;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+.todoContainer .task #taskButtons #deleteTask:hover {
+  cursor: pointer;
+}
+.todoContainer .task #taskButtons #deleteTask:active {
+  width: 28px;
+  height: 28px;
+}
+.todoContainer #addTask {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-left: 30px;
+  margin-right: 30px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  color: white;
+  font-size: 16px;
+}
+.todoContainer #addTask p {
+  margin-top: 5px;
+}
+.todoContainer #addTask img {
+  width: 30px;
+  height: 30px;
+  flex-direction: row;
+  align-items: center;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+.todoContainer #addTask img:hover {
+  cursor: pointer;
+}
+.todoContainer #addTask img:active {
+  width: 28px;
+  height: 28px;
+}
+.todoContainer .completedTask {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-left: 30px;
+  margin-right: 30px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  color: white;
+  font-size: 16px;
+}
+
+#footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 50px;
+  text-align: center;
+  line-height: 50px;
+  font-size: 14px;
+  color: #fff;
+}
+#footer a {
+  color: #fff;
+  text-decoration: none;
+}
+
+/*# sourceMappingURL=style.css.map */

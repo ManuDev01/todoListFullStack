@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TodoList: Manuel Diaz</title>
+    <link rel="icon" href="assets/listIcon.png">
+    <link rel="stylesheet" href="../src/css/style.css">
+</head>
+<body>
+    <header >
+        <nav id="TabHeader">
+            <div class="tab">
+                <p>Clases</p>
+                <img class="close-icon" src="../public/assets/images/close.png" alt="">
+            </div>
+
+            <div class="addTab">
+                <img src="../public/assets/images/add.png" alt="">
+            </div>
+
+            <div class="user">
+                <img id="userImage" src="assets/images/usuario.png" alt="">
+            </div>
+        </nav>
+    </header>
+    <main class="todoContainer">
+        <hr>
+        <div class="task">
+            <input type="checkbox" name="taskCheck" id="">
+            <p>Terminar la interfaz</p>
+            <div id="taskButtons">
+                <img id="checkTask" src="../public/assets/images/check.png" alt="">
+                <hr>
+                <img id="deleteTask" src="../public/assets/images/trash.png" alt="">
+            </div>
+        </div>
+        <hr>
+        <div id="addTask">
+            <p>Añadir tarea!</p>
+            <img src="../public/assets/images/add.png" alt="">
+        </div>
+        <hr>
+        <div class="completedTask">
+        </div>
+    </main>
+    <footer id="footer">
+        <p>TodoList created with 💛 and ☕ by <a href="https://github.com/ManuDev01" target="_blank">Manudev01</a></p>
+    </footer>
+    <script type="module" src="../src/js/index.js"></script>
+</body>
+</html>

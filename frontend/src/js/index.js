@@ -2,13 +2,109 @@ import { registerUser } from './api.js';
 import { loginUser } from './api.js';
 import { addTask } from './api.js';
 
+// Estructura de datos para pestañas y tareas
+let tabs = [];
+let activeTabId = null;
+let tabIdCounter = 1;
+let taskIdCounter = 1;
+
+// Inicializa con una pestaña por defecto y una tarea de ejemplo
+function initTabs() {
+    tabs = [
+        {
+            id: tabIdCounter++,
+            name: 'Clases',
+            tasks: [
+                {
+                    id: taskIdCounter++,
+                    name: 'Terminar la interfaz',
+                    completed: false
+                }
+            ]
+        }
+    ];
+    activeTabId = tabs[0].id;
+}
+
+initTabs();
+
+// Renderiza las pestañas en el header
+function renderTabs() {
+    const tabHeader = document.getElementById('TabHeader');
+    // Elimina todas las pestañas excepto addTab y user
+    tabHeader.querySelectorAll('.tab').forEach(tab => tab.remove());
+    tabs.forEach(tab => {
+        const tabDiv = document.createElement('div');
+        tabDiv.className = 'tab';
+        tabDiv.dataset.tabId = tab.id;
+        if (tab.id === activeTabId) {
+            tabDiv.style.background = '#333';
+        } else {
+            tabDiv.style.background = 'transparent';
+        }
+        const p = document.createElement('p');
+        p.textContent = tab.name;
+        hacerEditableTab(p, tab.id);
+        tabDiv.appendChild(p);
+        const closeIcon = document.createElement('img');
+        closeIcon.className = 'close-icon';
+        closeIcon.src = '../public/assets/images/close.png';
+        closeIcon.alt = '';
+        tabDiv.appendChild(closeIcon);
+        // Insertar antes de addTab
+        const addTabDiv = tabHeader.querySelector('.addTab');
+        tabHeader.insertBefore(tabDiv, addTabDiv);
+    });
+}
+
+// Renderiza las tareas de la pestaña activa
+function renderTasks() {
+    const todoContainer = document.querySelector('.todoContainer');
+    // Elimina todas las tareas y hr excepto addTask, completedTask y hr finales
+    todoContainer.querySelectorAll('.task, hr').forEach(el => {
+        if (!el.id && !el.classList.contains('completedTask')) el.remove();
+    });
+    const activeTab = tabs.find(tab => tab.id === activeTabId);
+    if (!activeTab) return;
+    activeTab.tasks.forEach(task => {
+        // hr superior
+        const hrArriba = document.createElement('hr');
+        todoContainer.insertBefore(hrArriba, document.getElementById('addTask'));
+        // div de tarea
+        const taskDiv = document.createElement('div');
+        taskDiv.className = 'task';
+        taskDiv.dataset.taskId = task.id;
+        taskDiv.innerHTML = `
+            <input type="checkbox" name="taskCheck" ${task.completed ? 'checked' : ''}>
+            <p>${task.name}</p>
+            <div id="taskButtons">
+                <img id="checkTask" src="../public/assets/images/check.png" alt="">
+                <hr>
+                <img id="deleteTask" src="../public/assets/images/trash.png" alt="">
+            </div>
+        `;
+        todoContainer.insertBefore(taskDiv, document.getElementById('addTask'));
+        // hr inferior
+        const hrAbajo = document.createElement('hr');
+        todoContainer.insertBefore(hrAbajo, document.getElementById('addTask'));
+        // Hacer el nombre editable
+        hacerEditableTask(taskDiv.querySelector('p'), task.id);
+    });
+}
+
+// Cambia la pestaña activa y renderiza
+function setActiveTab(tabId) {
+    activeTabId = tabId;
+    renderTabs();
+    renderTasks();
+}
+
 
 // Función para hacer editable el nombre de una pestaña
-function hacerEditableTab(tabElement) {
+function hacerEditableTab(tabElement, tabId) {
     tabElement.addEventListener('dblclick', function () {
         this.setAttribute('contenteditable', 'true');
         this.focus();
-        // Seleccionar todo el texto
         const range = document.createRange();
         range.selectNodeContents(this);
         const sel = window.getSelection();
@@ -17,15 +113,20 @@ function hacerEditableTab(tabElement) {
     });
     tabElement.addEventListener('blur', function () {
         this.removeAttribute('contenteditable');
+        // Actualiza el nombre en la estructura
+        const tab = tabs.find(t => t.id === tabId);
+        if (tab) {
+            tab.name = this.textContent;
+            renderTabs();
+        }
     });
 }
 
 // Función para hacer editable el nombre de una tarea
-function hacerEditableTask(taskElement) {
+function hacerEditableTask(taskElement, taskId) {
     taskElement.addEventListener('dblclick', function () {
         this.setAttribute('contenteditable', 'true');
         this.focus();
-        // Seleccionar todo el texto
         const range = document.createRange();
         range.selectNodeContents(this);
         const sel = window.getSelection();
@@ -34,6 +135,15 @@ function hacerEditableTask(taskElement) {
     });
     taskElement.addEventListener('blur', function () {
         this.removeAttribute('contenteditable');
+        // Actualiza el nombre en la estructura
+        const tab = tabs.find(t => t.id === activeTabId);
+        if (tab) {
+            const task = tab.tasks.find(tsk => tsk.id === taskId);
+            if (task) {
+                task.name = this.textContent;
+                renderTasks();
+            }
+        }
     });
 }
 
@@ -42,87 +152,111 @@ function eliminarTareaYHrs(elemento) {
     const taskDiv = elemento.closest('.task');
     if (taskDiv) {
         const prev = taskDiv.previousElementSibling;
-        const next = taskDiv.nextElementSibling;
         if (prev && prev.tagName === 'HR') {
             prev.remove();
         }
+        // Elimina de la estructura
+        const taskId = Number(taskDiv.dataset.taskId);
+        const tab = tabs.find(t => t.id === activeTabId);
+        if (tab) {
+            tab.tasks = tab.tasks.filter(tsk => tsk.id !== taskId);
+        }
         taskDiv.remove();
+        const next = taskDiv.nextElementSibling;
+        if (next && next.tagName === 'HR') {
+            next.remove();
+        }
     }
+    renderTasks();
 }
 
-// Inicializar eventos para pestañas existentes
-document.querySelectorAll('.tab p').forEach(hacerEditableTab);
+// Render inicial
+document.addEventListener('DOMContentLoaded', function () {
+    renderTabs();
+    renderTasks();
+    acountClick();
+    // ...existing code...
+    const completedTaskDiv = document.querySelector('.completedTask');
+    if (completedTaskDiv && !completedTaskDiv.querySelector('details')) {
+        const details = document.createElement('details');
+        details.open = true;
+        const summary = document.createElement('summary');
+        summary.textContent = 'Tareas completadas';
+        const ul = document.createElement('ul');
+        ul.id = 'completedList';
+        ul.style.listStyle = 'none';
+        ul.style.padding = '0';
+        details.appendChild(summary);
+        details.appendChild(ul);
+        completedTaskDiv.appendChild(details);
+    }
+});
 
-// Inicializar eventos para tareas existentes
-document.querySelectorAll('.task p').forEach(hacerEditableTask);
-
-// Añadir nueva tarea
+// Añadir nueva tarea SOLO a la pestaña activa
 function agregarNuevaTarea() {
     mostrarModalNombreTarea(function(nombreTarea) {
-        // Crear el hr superior
-        const hrArriba = document.createElement('hr');
-        // Crear el div de la tarea
-        const taskDiv = document.createElement('div');
-        taskDiv.className = 'task';
-        taskDiv.innerHTML = `
-            <input type="checkbox" name="taskCheck" id="">
-            <p>${nombreTarea}</p>
-            <div id="taskButtons">
-                <img id="checkTask" src="../public/assets/images/check.png" alt="">
-                <hr>
-                <img id="deleteTask" src="../public/assets/images/trash.png" alt="">
-            </div>
-        `;
-        // Crear el hr inferior
-        const hrAbajo = document.createElement('hr');
-
-        // Insertar antes del div de añadir tarea
-        const addTaskDiv = document.getElementById('addTask');
-        //addTaskDiv.parentNode.insertBefore(hrArriba, addTaskDiv);
-        addTaskDiv.parentNode.insertBefore(taskDiv, addTaskDiv);
-        addTaskDiv.parentNode.insertBefore(hrAbajo, addTaskDiv);
-
-        // Hacer el nombre editable al hacer doble clic
-        const taskName = taskDiv.querySelector('p');
-        hacerEditableTask(taskName);
+        const tab = tabs.find(t => t.id === activeTabId);
+        if (tab) {
+            tab.tasks.push({
+                id: taskIdCounter++,
+                name: nombreTarea,
+                completed: false
+            });
+            renderTasks();
+        }
     });
 }
 
-document.querySelector('#addTask img').addEventListener('click', agregarNuevaTarea);
+document.addEventListener('click', function(e) {
+    if (e.target && e.target.closest('#addTask img')) {
+        agregarNuevaTarea();
+    }
+});
 
-// Función para agregar una nueva pestaña
+// Función para agregar una nueva pestaña (sin tareas)
 function agregarNuevaPestana() {
     mostrarModalNombrePestana(function(nombrePestana) {
-        const tabDiv = document.createElement('div');
-        tabDiv.className = 'tab';
-        tabDiv.innerHTML = `
-            <p>${nombrePestana}</p>
-            <img class="close-icon" src="../public/assets/images/close.png" alt="">
-        `;
-        const addTabDiv = document.querySelector('.addTab');
-        addTabDiv.parentNode.insertBefore(tabDiv, addTabDiv);
-
-        // Hacer el nombre editable al hacer doble clic
-        const tabName = tabDiv.querySelector('p');
-        hacerEditableTab(tabName);
+        const newTab = {
+            id: tabIdCounter++,
+            name: nombrePestana,
+            tasks: []
+        };
+        tabs.push(newTab);
+        setActiveTab(newTab.id);
     });
 }
 
-// Asignar evento al botón de agregar pestaña
-document.querySelector('.addTab img').addEventListener('click', agregarNuevaPestana);
+document.addEventListener('click', function(e) {
+    if (e.target && e.target.closest('.addTab img')) {
+        agregarNuevaPestana();
+    }
+});
 
-// Función para eliminar una pestaña
+// Eliminar pestaña por ID
 function eliminarPestana(elemento) {
     const tabDiv = elemento.closest('.tab');
     if (tabDiv) {
-        tabDiv.remove();
+        const tabId = Number(tabDiv.dataset.tabId);
+        tabs = tabs.filter(t => t.id !== tabId);
+        // Si eliminamos la activa, selecciona la primera
+        if (activeTabId === tabId) {
+            activeTabId = tabs.length ? tabs[0].id : null;
+        }
+        renderTabs();
+        renderTasks();
     }
 }
 
-// Delegación de eventos para eliminar pestañas
-document.querySelector('#TabHeader').addEventListener('click', function (e) {
+// Delegación de eventos para eliminar y cambiar pestañas
+document.getElementById('TabHeader').addEventListener('click', function (e) {
     if (e.target && e.target.classList.contains('close-icon')) {
         eliminarPestana(e.target);
+    }
+    // Cambiar pestaña activa al hacer click en la pestaña
+    if (e.target && e.target.closest('.tab') && !e.target.classList.contains('close-icon')) {
+        const tabDiv = e.target.closest('.tab');
+        const tabId = Number(tabDiv.dataset.tabId);
+        setActiveTab(tabId);
     }
 });
 
@@ -485,27 +619,31 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-// Delegación para marcar tarea como completada
+// Delegación para marcar tarea como completada y eliminar
 document.querySelector('.todoContainer').addEventListener('click', function (e) {
     if (e.target && e.target.id === 'checkTask') {
         const taskDiv = e.target.closest('.task');
         if (taskDiv) {
-            const taskText = taskDiv.querySelector('p').textContent;
-            // Añadir a la lista de completadas
-            const completedList = document.getElementById('completedList');
-            if (completedList) {
-                const li = document.createElement('li');
-                li.textContent = taskText;
-                li.style.color = '#28a745';
-                li.style.marginBottom = '6px';
-                completedList.appendChild(li);
+            const taskId = Number(taskDiv.dataset.taskId);
+            const tab = tabs.find(t => t.id === activeTabId);
+            if (tab) {
+                const task = tab.tasks.find(tsk => tsk.id === taskId);
+                if (task) {
+                    task.completed = true;
+                    // Añadir a la lista de completadas
+                    const completedList = document.getElementById('completedList');
+                    if (completedList) {
+                        const li = document.createElement('li');
+                        li.textContent = task.name;
+                        li.style.color = '#28a745';
+                        li.style.marginBottom = '6px';
+                        completedList.appendChild(li);
+                    }
+                    // Eliminar de la estructura
+                    tab.tasks = tab.tasks.filter(tsk => tsk.id !== taskId);
+                    renderTasks();
+                }
             }
-            // Eliminar la tarea y su <hr> anterior
-            const prev = taskDiv.previousElementSibling;
-            if (prev && prev.tagName === 'HR') {
-                prev.remove();
-            }
-            taskDiv.remove();
         }
     }
     // Eliminar tarea y los hr exteriores usando delegación de eventos

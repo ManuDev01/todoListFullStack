@@ -24,7 +24,7 @@ public class UserController {
     }
 
     @GetMapping("/login/{username}/{password}")
-    public String login(@PathVariable String username, @PathVariable String password) {
+    public Long login(@PathVariable String username, @PathVariable String password) {
         userServices userService = new userServices();
         return userService.login(username, password);
     }

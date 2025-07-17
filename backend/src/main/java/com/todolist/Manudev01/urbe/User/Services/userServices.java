@@ -45,22 +45,22 @@ public class userServices {
         }
     }
 
-    public String login(String username, String password) {
-        String sql = "SELECT * FROM usuarios WHERE usuario = ? AND contrasena = ?";
+    public Long login(String username, String password) {
+        String sql = "SELECT idusuario FROM usuarios WHERE usuario = ? AND contrasena = ?";
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, username);
             ps.setString(2, password);
             var resultSet = ps.executeQuery();
+            System.out.println(resultSet);
             if (resultSet.next()) {
-                return "Login Succesfully";
-
+                return resultSet.getLong("idusuario"); // Retorna el ID del usuario
             } else {
                 System.out.println("User not found.");
-                return "User not found.";
+                return null; // Usuario no encontrado
             }
         } catch (SQLException e) {
-            return "Error retrieving user: " + e.getMessage();
+            throw new RuntimeException("Error retrieving user: " + e.getMessage(), e);
         }
     }
 }

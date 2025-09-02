@@ -69,9 +69,8 @@ TodoList es una aplicación para gestionar tareas de manera eficiente, con una A
 ### 1. Clonar el repositorio
 
 ```bash
-git clone https://github.com/jpirela/proyecto_2.git
-cd proyecto_2
-git checkout ManueDiazTodoList
+https://github.com/ManuDev01/todoListFullStack
+cd todoListFullStack
 ```
 
 ### 2. Instalación de dependencias
@@ -131,17 +130,6 @@ Puedes abrir `index.html` directamente en el navegador o servirlo usando un serv
 cd desktop-app
 python main.py
 ```
-
-## Contribuciones
-
-Si deseas contribuir al proyecto, sigue estos pasos:
-
-1. Haz un fork del repositorio.
-2. Crea una nueva rama (`git checkout -b feature/mi-nueva-caracteristica`).
-3. Realiza los cambios y asegúrate de que todo funcione correctamente.
-4. Haz un commit de tus cambios (`git commit -am 'Añadir nueva característica'`).
-5. Sube los cambios a tu repositorio (`git push origin feature/mi-nueva-caracteristica`).
-6. Abre un Pull Request en el repositorio principal.
 
 ## Licencia
 
